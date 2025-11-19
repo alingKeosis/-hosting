@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="th">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบลงทะเบียนซื้อโรสติ่ง</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', 'Phetsarath OT', 'Phetsarath OT', 'Phetsarath OT', Arial, sans-serif;
+            background: linear-gradient(135deg, #51BC88 0%, #53BFC1 50%, #57C785 100%);
+            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: #51BC88;
+            text-align: center;
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Prompt', 'Phetsarath OT', 'Phetsarath OT', sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #51BC88;
+            box-shadow: 0 0 0 3px rgba(81, 188, 136, 0.1);
+        }
+
+        .auto-field {
+            background-color: #f5f5f5;
+            padding: 0.875rem;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #51BC88, #53BFC1);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            font-family: 'Prompt', Phetsarath OT;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(81, 188, 136, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .table-header {
+            color: #51BC88;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #51BC88, #53BFC1);
+            color: white;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .total-row {
+            background-color: #f0f9f5 !important;
+            font-weight: 600;
+            color: #51BC88 !important;
+        }
+
+        .total-row td {
+            border-top: 2px solid #51BC88;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-message,
+        .error-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                margin: 1rem auto;
+            }
+
+            .card, .table-card {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <main class="container">
+   <div class="card">
+    <h1 id="pageTitle">ຮ່ວມກັນຊື້ Hosting </h1>
+    <p class="subtitle">ປ້ອນຂໍ້ມູນໃຫ້ຄົບຖ້ວນ</p>
+    <div id="messageContainer"></div>
+    <form id="registrationForm">
+     <div class="form-group"><label for="fullName" id="nameLabel">ຊື່ ແລະ ນາມສະກຸນ</label> <input type="text" id="fullName" required placeholder="ປ້ອນຊື່ແລະນາມສະກຸນ">
+     </div>
+     <div class="form-group"><label for="peopleCount">ຈຳນວນຄົນ</label>
+      <div class="auto-field" id="peopleCountDisplay">
+       1 ຄົນ
+      </div>
+     </div>
+     <div class="form-group"><label for="amount" id="amountLabel">ຈຳນວນເງິນ (ກີບ)</label> <input type="number" id="amount" required min="0" step="1" placeholder="0">
+     </div>
+     <div class="form-group"><label for="totalAmount">ລວມເປັນເງິນທັງໝົດ (ກີບ)</label>
+      <div class="auto-field" id="totalAmountDisplay">
+       0
+      </div>
+     </div><button type="submit" class="submit-btn" id="submitBtn"> <span id="submitText">ລົງທະບຽນ</span> </button>
+    </form>
+   </div>
+   <div class="table-card">
+    <div class="table-header">
+     ລາຍການລົງທະບຽນທັງໝົດ
+    </div>
+    <div class="table-container">
+     <table id="registrationTable">
+      <thead>
+       <tr>
+        <th>ຊື່ແລະນາມສະກຸນ</th>
+        <th>ຈຳນວນຄົນ</th>
+        <th>ຈຳນວນເງິນ (ກີບ)</th>
+        <th>ລວມທັງໝົດ (ກີບ)</th>
+       </tr>
+      </thead>
+      <tbody id="tableBody">
+       <tr>
+        <td colspan="4">
+         <div class="empty-state">
+          <div class="empty-state-icon">
+           📋
+          </div>
+          <div>
+           ຍັງບໍ່ມີຂໍ້ມູນລົງທະບຽນ
+          </div>
+         </div></td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </div>
+  </main>
+  <script>
+        const defaultConfig = {
+            page_title: "ລະບົບລົງທະບຽນຊື້ໂຮສຕິງ",
+            name_label: "ຊື່ ແລະ ນາມສະກຸນ",
+            amount_label: "ຈຳນວນເງິນ (ກີບ)",
+            submit_button: "ລົງທະບຽນ",
+            primary_color: "#51BC88",
+            surface_color: "#ffffff",
+            text_color: "#333333",
+            accent_color: "#53BFC1"
+        };
+
+        let registrationData = [];
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFmm1zmec_GW13GNgqfSfGqYg-_L9_j4JDESi0zDiE7SbC8I5RlTPqHaxmbUSAZggqzw/exec";
+
+        async function onConfigChange(config) {
+            const pageTitle = config.page_title || defaultConfig.page_title;
+            const nameLabel = config.name_label || defaultConfig.name_label;
+            const amountLabel = config.amount_label || defaultConfig.amount_label;
+            const submitButton = config.submit_button || defaultConfig.submit_button;
+            const primaryColor = config.primary_color || defaultConfig.primary_color;
+            const surfaceColor = config.surface_color || defaultConfig.surface_color;
+            const textColor = config.text_color || defaultConfig.text_color;
+            const accentColor = config.accent_color || defaultConfig.accent_color;
+
+            document.getElementById('pageTitle').textContent = pageTitle;
+            document.getElementById('nameLabel').textContent = nameLabel;
+            document.getElementById('amountLabel').textContent = amountLabel;
+            document.getElementById('submitText').textContent = submitButton;
+
+            document.querySelector('h1').style.color = primaryColor;
+            document.querySelector('.table-header').style.color = primaryColor;
+            document.querySelectorAll('label').forEach(label => {
+                label.style.color = textColor;
+            });
+            
+            const gradient = `linear-gradient(135deg, ${primaryColor}, ${accentColor})`;
+            document.querySelector('.submit-btn').style.background = gradient;
+            document.querySelector('thead').style.background = gradient;
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [
+                        {
+                            get: () => config.primary_color || defaultConfig.primary_color,
+                            set: (value) => {
+                                config.primary_color = value;
+                                window.elementSdk.setConfig({ primary_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.surface_color || defaultConfig.surface_color,
+                            set: (value) => {
+                                config.surface_color = value;
+                                window.elementSdk.setConfig({ surface_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.text_color || defaultConfig.text_color,
+                            set: (value) => {
+                                config.text_color = value;
+                                window.elementSdk.setConfig({ text_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.accent_color || defaultConfig.accent_color,
+                            set: (value) => {
+                                config.accent_color = value;
+                                window.elementSdk.setConfig({ accent_color: value });
+                            }
+                        }
+                    ],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ["page_title", config.page_title || defaultConfig.page_title],
+                    ["name_label", config.name_label || defaultConfig.name_label],
+                    ["amount_label", config.amount_label || defaultConfig.amount_label],
+                    ["submit_button", config.submit_button || defaultConfig.submit_button]
+                ])
+            });
+        }
+
+        const amountInput = document.getElementById('amount');
+        const totalAmountDisplay = document.getElementById('totalAmountDisplay');
+        const peopleCountDisplay = document.getElementById('peopleCountDisplay');
+
+        amountInput.addEventListener('input', function() {
+            const amount = parseFloat(this.value) || 0;
+            totalAmountDisplay.textContent = Math.round(amount).toLocaleString('th-TH');
+        });
+
+        function showMessage(message, isError = false) {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isError ? 'error-message' : 'success-message';
+            messageDiv.textContent = message;
+            messageContainer.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => messageDiv.remove(), 300);
+            }, 3000);
+        }
+
+        function updateTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (registrationData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📋</div>
+                                <div>ຍັງບໍ່ຂໍ້ມູນການລົງທະບຽນ</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let grandTotal = 0;
+
+            registrationData.forEach(item => {
+                const row = document.createElement('tr');
+                const total = item.amount;
+                grandTotal += total;
+
+                row.innerHTML = `
+                    <td>${item.fullName}</td>
+                    <td>${item.peopleCount} ຄົນ</td>
+                    <td>${Math.round(item.amount).toLocaleString('th-TH')}</td>
+                    <td>${Math.round(total).toLocaleString('th-TH')}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'total-row';
+            totalRow.innerHTML = `
+                <td colspan="3" style="text-align: right; padding-right: 1rem;"><strong>ລວມທັງໝົດ:</strong></td>
+                <td style="text-align: left; padding-left: 1rem;"><strong>${Math.round(grandTotal).toLocaleString('th-TH')}ກີບ</strong></td>
+            `;
+            tbody.appendChild(totalRow);
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch(SCRIPT_URL + '?action=getData');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    registrationData = data.data;
+                    updateTable();
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const originalText = submitText.textContent;
+            
+            submitBtn.disabled = true;
+            submitText.innerHTML = '<span class="loading-spinner"></span>ກຳລັງສົ່ງຂໍ້ມູນ...';
+
+            const formData = {
+                fullName: document.getElementById('fullName').value.trim(),
+                peopleCount: 1,
+                amount: parseFloat(document.getElementById('amount').value) || 0
+            };
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                registrationData.push(formData);
+                updateTable();
+                
+                showMessage('✅ ລົງທະບຽນສຳເລັດ!');
+                
+                document.getElementById('registrationForm').reset();
+                totalAmountDisplay.textContent = '0';
+
+            } catch (error) {
+                showMessage('❌ ເກີດຂໍ້ຜິດພາດໃນການສົ່ງຂໍ້ມູນ ກະລຸນາລອງໃໝ່ອີກຄັ້ງ', true);
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitText.textContent = originalText;
+            }
+        });
+
+        loadData();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a0d660dd44a09e8',t:'MTc2MzUzMTA5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
